@@ -2,17 +2,9 @@ from django.shortcuts import render
 from django.shortcuts import redirect, HttpResponse
 from .models import HotelUser
 from django.contrib import messages
-
-def verify_email_token(request, token):
-    try:
-        hotel_user = HotelUser.objects.get(email_token=token)
-        hotel_user.is_verified = True
-        hotel_user.save()
-        messages.success(request, "Email verified")
-        return redirect('/account/login/')
-    except HotelUser.DoesNotExist:
-        return HttpResponse("Invalid Token")
-
+from django.db.models import Q
+from .utils import generateRandomToken, sendEmailToken
+from django.contrib.auth import authenticate, login
 
 # Create your views here.
 
@@ -80,3 +72,15 @@ def register(request):
 
 
     return render(request, 'register.html')
+
+
+def verify_email_token(request, token):
+    try:
+        hotel_user = HotelUser.objects.get(email_token=token)
+        hotel_user.is_verified = True
+        hotel_user.save()
+        messages.success(request, "Email verified")
+        return redirect('/account/login/')
+    except HotelUser.DoesNotExist:
+        return HttpResponse("Invalid Token")
+
