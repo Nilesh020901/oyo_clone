@@ -1,10 +1,11 @@
-from django.shortcuts import render
-from django.shortcuts import redirect, HttpResponse
+from django.shortcuts import render, redirect
 from .models import HotelUser
-from django.contrib import messages
 from django.db.models import Q
-from .utils import generateRandomToken, sendEmailToken
+from django.contrib import messages
+from .utils import generateRandomToken, sendEmailToken, sendOTPtoEmail
+from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
+import random
 
 # Create your views here.
 
@@ -84,3 +85,30 @@ def verify_email_token(request, token):
     except HotelUser.DoesNotExist:
         return HttpResponse("Invalid Token")
 
+def send_otp(request, email):
+    hotel_user = HotelUser.objects.filter( email = email )
+    if not hotel_user.exists():
+        messages.warning(request, "No Account Found.")
+        return redirect('/account/login/')
+
+    otp =   random.randint(1000, 9999)
+    hotel_user.update(otp = otp)
+
+    sendOTPtoEmail(email, otp)
+
+    return redirect(f'/account/verify-otp/{email}/')
+
+def verify_otp(request, email):
+    if request.method == "POST":
+        otp = request.POST.get('otp')
+        hotel_user = HotelUser.objects.get(email = email)
+
+        if otp = hotel_user.otp:
+            messages.success(request, "Login Success")
+            login(request, hotel_user)
+            return redirect('/account/login/')
+
+        messages.warning(request, "Wrong OTP")
+        return redirect(f'/account/verify-otp/{email}/')
+
+    return render(request, 'verify_otp.html')
