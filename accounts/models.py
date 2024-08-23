@@ -14,6 +14,7 @@ class HotelVendor(User):
     profile_picture = models.ImageField(upload_to="profile")
     email_token = models.CharField(max_length = 100, null = True, blank = True)
     otp = models.CharField(max_length = 10 , null = True , blank = True)
+    business_name = models.CharField(max_length = 100)
 
     is_verified = models.BooleanField(default = False)
 
