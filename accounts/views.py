@@ -105,7 +105,7 @@ def verify_otp(request, email):
         otp = request.POST.get('otp')
         hotel_user = HotelUser.objects.get(email = email)
 
-        if otp = hotel_user.otp:
+        if otp == hotel_user.otp:
             messages.success(request, "Login Success")
             login(request, hotel_user)
             return redirect('/account/login/')
