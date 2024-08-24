@@ -186,6 +186,11 @@ def add_hotel(request):
         hotel_offer_price= request.POST.get('hotel_offer_price')
         hotel_location= request.POST.get('hotel_location')
         hotel_slug = generateSlug(hotel_name)
+        ameneties = request.POST.getlist('amenities')
+        for amenti in ameneties:
+            amenti = Ameneties.objects.getlist(id = amenti)
+            hotel_obj = ameneties.add(amenti)
+            hotel_obj.save()
 
         hotel_vendor = HotelVendor.objects.get(id = request.user.id)
 
@@ -199,16 +204,32 @@ def add_hotel(request):
             hotel_owner = hotel_vendor
         )
 
-        for ameneti in ameneties:
-            ameneti = Ameneties.objects.get(id=ameneti)
-            hotel_obj.ameneties.add(ameneti)
-            hotel_obj.save()
-
         messages.success(request, "Hotel Created")
-        return redirect('/account/add-hotel/')
+        return redirect('/account/add_hotel/')
 
     ameneties = Ameneties.objects.all()
 
     return render(request, 'vendor/add_vendor.html', context = {'ameneties' : ameneties})
 
+@login_required(login_url = 'login_vendor')
+def upload_images(request, slug):
+    hotel_obj = Hotel.objects.get(hotel_slug = slug)
+    if request.method == "POST":
+        image = request.FILES['image']
+        print(image)
+        HotelImages.objects.create(
+            hotel = hotel_obj,
+            image = image
+        )
+        return HttpResponsePermanentRedirect(request.path_info)
 
+    return render(request, 'vendor/upload_images.html', context = {'images' : hotel_obj.hotel_images.all()})
+
+@login_required(login_url = 'login_vendor')
+def delete_image(request, id):
+    print(id)
+    print("####")
+    hotel_image = HotelImages.objects.get(id = id)
+    hotel_image.delete()
+    messages.success(request, "Hotel Image Deleted")
+    return redirect('/account/dashboard')
