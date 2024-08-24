@@ -1,0 +1,33 @@
+<!--add_hotel.html-->
+{% extends "utils/vendor_base.html" %}
+
+{% block start %}
+<div class="container mt-5 pt-5 pb-5">
+
+  <div class="col-6 mx-auto card shadow p-4" style="border:none">
+    <h2>Add Hotel</h2>
+      <form method="POST">
+        {% include "utils/alerts.html" %}
+         {% csrf_token %}
+  <!-- Other form fields -->
+
+              <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Hotel ameneties</label>
+
+              <select name="ameneties" class="form-select form-select-sm" multiple aria-label="Small select example">
+                {% for amenetie in ameneties %}
+
+                <option value="{{amenetie.id}}">{{amenetie.name}}</option>
+
+                {% endfor %}
+              </select>
+              </div>
+
+          <button type="submit" class="btn btn-primary">Submit</button>
+
+        </form>
+  </div>
+  </div>
+
+
+{% endblock %}
