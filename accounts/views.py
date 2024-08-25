@@ -278,3 +278,7 @@ def edit_hotel(request, slug):
 
     # Render the edit_hotel.html template with hotel and amenities as context
     return render(request, 'vendor/edit_hotel.html', context={'hotel': hotel_obj, 'ameneties': ameneties})
+
+def logout_view(request):
+    logout(request)
+    return redirect('/account/login/')

@@ -11,6 +11,8 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('add_hotel/', views.add_hotel , name="add_hotel"),
     path('delete_image/<id>/', views.delete_image, name = "delete_image"),
+    path('edit_hotel/<slug>', views.edit_hotel, name='edit_hotel'),
+    path('logout/', views.logout_view, name='logout_view'),
     path('verify-account/<token>/', views.verify_email_token, name="verify_email_token"),
 
 ]
